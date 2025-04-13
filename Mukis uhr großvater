@@ -1,0 +1,68 @@
+ -- Muscle Legends Script - All-in-One (für Delta & Mobile)
+-- Features: Auto Farm, Auto Rebirth, Auto Pet Switch, Anti Lag, Auto Kill
+
+local Player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+
+-- Anti Lag
+for _, v in pairs(workspace:GetDescendants()) do
+    if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Explosion") then
+        v:Destroy()
+    end
+end
+settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+
+-- Auto Farm
+local autoFarm = true
+spawn(function()
+    while autoFarm do
+        local muscleTool = Player.Backpack:FindFirstChildOfClass("Tool") or Player.Character:FindFirstChildOfClass("Tool")
+        if muscleTool then
+            muscleTool:Activate()
+        end
+        wait(0.1)
+    end
+end)
+
+-- Auto Rebirth
+local autoRebirth = true
+spawn(function()
+    while autoRebirth do
+        game:GetService("ReplicatedStorage").RebirthEvent:FireServer()
+        wait(1)
+    end
+end)
+
+-- Auto Pet Switch (Wechselt zufällig durch alle Pets im Inventar)
+local autoPetSwitch = true
+spawn(function()
+    while autoPetSwitch do
+        local pets = Player.PetInventory:GetChildren()
+        for _, pet in pairs(pets) do
+            game:GetService("ReplicatedStorage").UnequipPet:FireServer(pet.Name)
+            wait(0.3)
+            game:GetService("ReplicatedStorage").EquipPet:FireServer(pet.Name)
+            wait(2)
+        end
+    end
+end)
+
+-- Auto Kill (TP zu anderen Spielern und schlägt sie)
+local autoKill = true
+spawn(function()
+    while autoKill do
+        for _, plr in pairs(game.Players:GetPlayers()) do
+            if plr ~= Player and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+                Player.Character:MoveTo(plr.Character.HumanoidRootPart.Position + Vector3.new(0,5,0))
+                local tool = Player.Backpack:FindFirstChildOfClass("Tool") or Player.Character:FindFirstChildOfClass("Tool")
+                if tool then
+                    tool:Activate()
+                end
+                wait(1)
+            end
+        end
+    end
+end)
+
+-- Toggle Funktion (optional für Button GUI)
+-- Du kannst das GUI selbst mit z.B. OrionLib einbauen oder Buttons mit Instance.new("TextButton")
