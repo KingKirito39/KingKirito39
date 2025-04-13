@@ -1,0 +1,98 @@
+-- Simple Muscle Legends GUI Tool by ChatGPT
+
+-- UI erstellen
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 200, 0, 220)
+Frame.Position = UDim2.new(0, 20, 0, 100)
+Frame.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
+Frame.BorderSizePixel = 0
+
+local title = Instance.new("TextLabel", Frame)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "Muscle Legends Tool"
+title.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+title.TextColor3 = Color3.new(1, 1, 1)
+
+-- Funktionen
+local autoFarm = false
+local autoKill = false
+local antiLag = false
+
+-- Anti Lag Funktion direkt aktivieren
+for _, v in pairs(workspace:GetDescendants()) do
+    if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Explosion") then
+        v:Destroy()
+    end
+end
+
+settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+
+-- AutoFarm Loop
+spawn(function()
+    while true do
+        if autoFarm then
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool") or game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
+            if tool then
+                tool:Activate()
+            end
+        end
+        wait(0.1)
+    end
+end)
+
+-- AutoKill Loop
+spawn(function()
+    while true do
+        if autoKill then
+            for _, plr in pairs(game.Players:GetPlayers()) do
+                if plr ~= game.Players.LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+                    game.Players.LocalPlayer.Character:MoveTo(plr.Character.HumanoidRootPart.Position + Vector3.new(0, 3, 0))
+                    local tool = game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool") or game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
+                    if tool then
+                        tool:Activate()
+                    end
+                end
+            end
+        end
+        wait(1)
+    end
+end)
+
+-- Buttons erstellen
+local function createToggleButton(name, yPos, callback)
+    local btn = Instance.new("TextButton", Frame)
+    btn.Size = UDim2.new(1, -20, 0, 40)
+    btn.Position = UDim2.new(0, 10, 0, yPos)
+    btn.Text = name .. ": OFF"
+    btn.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.MouseButton1Click:Connect(function()
+        local state = callback()
+        btn.Text = name .. ": " .. (state and "ON" or "OFF")
+    end)
+end
+
+-- Buttons mit Funktionen verbinden
+createToggleButton("Auto Farm", 40, function()
+    autoFarm = not autoFarm
+    return autoFarm
+end)
+
+createToggleButton("Auto Kill", 90, function()
+    autoKill = not autoKill
+    return autoKill
+end)
+
+createToggleButton("Anti Lag", 140, function()
+    antiLag = not antiLag
+    if antiLag then
+        for _, v in pairs(workspace:GetDescendants()) do
+            if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Explosion") then
+                v:Destroy()
+            end
+        end
+        settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    end
+    return antiLag
+end)
