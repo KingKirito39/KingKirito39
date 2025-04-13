@@ -1,0 +1,65 @@
+-- Muscle Legends GUI by ChatGPT (mobilfreundlich)
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UIListLayout = Instance.new("UIListLayout")
+
+-- Funktionen
+local function AutoPushUps()
+    while _G.AutoPush do
+        game:GetService("ReplicatedStorage").rEvents.trainEvent:FireServer("PushUp")
+        wait(0.2)
+    end
+end
+
+local function AutoSitUps()
+    while _G.AutoSit do
+        game:GetService("ReplicatedStorage").rEvents.trainEvent:FireServer("Situp")
+        wait(0.2)
+    end
+end
+
+local function AutoRebirth()
+    while _G.AutoRebirth do
+        game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer()
+        wait(5)
+    end
+end
+
+-- GUI Setup
+ScreenGui.Parent = game.CoreGui
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+MainFrame.Position = UDim2.new(0.05, 0, 0.1, 0)
+MainFrame.Size = UDim2.new(0, 200, 0, 250)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+UIListLayout.Parent = MainFrame
+UIListLayout.Padding = UDim.new(0, 5)
+
+-- Button Funktion
+local function CreateButton(text, toggleVarName, toggleFunc)
+    local button = Instance.new("TextButton")
+    button.Parent = MainFrame
+    button.Size = UDim2.new(0, 180, 0, 40)
+    button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.Font = Enum.Font.SourceSansBold
+    button.TextSize = 14
+    button.Text = "Aktiviere: " .. text
+
+    local active = false
+    button.MouseButton1Click:Connect(function()
+        active = not active
+        _G[toggleVarName] = active
+        button.Text = (active and "Deaktiviere: " or "Aktiviere: ") .. text
+        if active then
+            coroutine.wrap(toggleFunc)()
+        end
+    end)
+end
+
+-- Buttons hinzufügen
+CreateButton("Auto Push-Ups", "AutoPush", AutoPushUps)
+CreateButton("Auto Sit-Ups", "AutoSit", AutoSitUps)
+CreateButton("Auto Rebirth", "AutoRebirth", AutoRebirth)
