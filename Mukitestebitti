@@ -1,0 +1,61 @@
+-- GUI erstellen
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local AutoFarmBtn = Instance.new("TextButton")
+local AutoRebirthBtn = Instance.new("TextButton")
+local ExitBtn = Instance.new("TextButton")
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.Name = "MuscleLegendsTrainer"
+
+Frame.Size = UDim2.new(0, 200, 0, 150)
+Frame.Position = UDim2.new(0, 100, 0, 100)
+Frame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+Frame.Parent = ScreenGui
+
+-- AutoFarm Button
+AutoFarmBtn.Size = UDim2.new(1, 0, 0, 40)
+AutoFarmBtn.Position = UDim2.new(0, 0, 0, 0)
+AutoFarmBtn.Text = "Auto Farm"
+AutoFarmBtn.BackgroundColor3 = Color3.new(0.3, 0.6, 0.3)
+AutoFarmBtn.Parent = Frame
+
+-- AutoRebirth Button
+AutoRebirthBtn.Size = UDim2.new(1, 0, 0, 40)
+AutoRebirthBtn.Position = UDim2.new(0, 0, 0, 50)
+AutoRebirthBtn.Text = "Auto Rebirth"
+AutoRebirthBtn.BackgroundColor3 = Color3.new(0.6, 0.3, 0.3)
+AutoRebirthBtn.Parent = Frame
+
+-- Exit Button
+ExitBtn.Size = UDim2.new(1, 0, 0, 40)
+ExitBtn.Position = UDim2.new(0, 0, 0, 100)
+ExitBtn.Text = "Schließen"
+ExitBtn.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+ExitBtn.Parent = Frame
+
+-- Funktionen
+local autoFarm = false
+local autoRebirth = false
+
+AutoFarmBtn.MouseButton1Click:Connect(function()
+    autoFarm = not autoFarm
+    AutoFarmBtn.Text = autoFarm and "Auto Farm: ON" or "Auto Farm"
+    while autoFarm do
+        game:GetService("ReplicatedStorage"):WaitForChild("MuscleEvent"):FireServer("GainMuscle")
+        wait(0.1)
+    end
+end)
+
+AutoRebirthBtn.MouseButton1Click:Connect(function()
+    autoRebirth = not autoRebirth
+    AutoRebirthBtn.Text = autoRebirth and "Auto Rebirth: ON" or "Auto Rebirth"
+    while autoRebirth do
+        game:GetService("ReplicatedStorage"):WaitForChild("RebirthRemote"):FireServer()
+        wait(1.5)
+    end
+end)
+
+ExitBtn.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
